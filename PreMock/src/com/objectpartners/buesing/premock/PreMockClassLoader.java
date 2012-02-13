@@ -14,8 +14,6 @@ import javassist.NotFoundException;
 
 public class PreMockClassLoader extends ClassLoader {
 
-  private static final int NOT_FINAL_MASK = 0xFFFF ^ Modifier.FINAL;
-
   private static Set<String> classes = Collections.emptySet();
 
   private ClassPool pool;
@@ -63,12 +61,16 @@ public class PreMockClassLoader extends ClassLoader {
       CtClass cc = pool.get(name);
 
       // remove final modifier from the class
-      cc.setModifiers(cc.getModifiers() & NOT_FINAL_MASK);
-
+      if (Modifier.isFinal(cc.getModifiers())) {
+        cc.setModifiers(cc.getModifiers() & ~Modifier.FINAL);
+      }
+          
       // remove final modifiers from all methods
       CtMethod[] methods = cc.getDeclaredMethods();
       for (CtMethod method : methods) {
-        method.setModifiers(method.getModifiers() & NOT_FINAL_MASK);
+        if (Modifier.isFinal(method.getModifiers())) {
+          method.setModifiers(method.getModifiers() & ~Modifier.FINAL);
+        }
       }
 
       byte[] b = cc.toBytecode();
