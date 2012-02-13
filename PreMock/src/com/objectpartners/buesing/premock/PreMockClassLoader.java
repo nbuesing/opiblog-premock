@@ -65,7 +65,7 @@ public class PreMockClassLoader extends ClassLoader {
       // remove final modifier from the class
       cc.setModifiers(cc.getModifiers() & NOT_FINAL_MASK);
 
-      // remove final and native modifiers from all methods.
+      // remove final modifiers from all methods
       CtMethod[] methods = cc.getDeclaredMethods();
       for (CtMethod method : methods) {
         method.setModifiers(method.getModifiers() & NOT_FINAL_MASK);
